@@ -31,13 +31,10 @@ jobs:
       # Derives the correct base/head SHAs for `nx affected` on push and PR.
       - uses: nrwl/nx-set-shas@v4
 
-      # Nx Cloud remote cache is used automatically (nxCloudId in nx.json): tasks
-      # already computed on another machine are restored instead of re-run, and
-      # each run is reported to the Nx Cloud dashboard.
-      #
-      # To additionally distribute tasks across managed agents (DTE), add a launch
-      # template at .nx/workflows/agents.yaml and prefix the run below with:
-      #   pnpm exec nx-cloud start-ci-run --distribute-on=".nx/workflows/agents.yaml"
+      # Nx Cloud: distribute affected tasks across 3 managed agents (DTE) + share
+      # the remote cache. `linux-medium-js` is a predefined Nx Cloud launch
+      # template that checks out and installs (pnpm) on each agent.
+      - run: pnpm exec nx-cloud start-ci-run --distribute-on="3 linux-medium-js"
 
       # Only build/lint/test the projects affected by this change.
       # `size-check` is inferred on any project with a size-budget.json and
