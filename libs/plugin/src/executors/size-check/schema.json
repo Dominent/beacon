@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Size check",
+  "type": "object",
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "description": "Build output directory to scan for JS."
+    },
+    "maxKb": {
+      "type": "number",
+      "description": "Maximum total JS size in KB. Overridden by budgetFile if present."
+    },
+    "budgetFile": {
+      "type": "string",
+      "description": "Optional JSON file ({ \"maxKb\": number }) relative to the workspace root."
+    }
+  },
+  "required": ["outputPath"]
+}

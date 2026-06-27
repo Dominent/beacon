@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "BeaconFeature",
+  "title": "Beacon feature library",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domain scope the feature belongs to (e.g. issues, dashboard).",
+      "x-prompt": "Which domain does this feature belong to?"
+    },
+    "name": {
+      "type": "string",
+      "description": "Feature name (e.g. timeline). Becomes feature-<name>.",
+      "x-prompt": "What is the feature name?"
+    }
+  },
+  "required": ["domain", "name"]
+}

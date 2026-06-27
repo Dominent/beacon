@@ -35,6 +35,8 @@ jobs:
       # - run: pnpm exec nx-cloud start-ci-run --distribute-on="dynamic" --stop-agents-after="e2e-ci"
 
       # Only build/lint/test the projects affected by this change.
-      - run: pnpm exec nx affected -t lint test build --parallel=3
+      # `size-check` is inferred on any project with a size-budget.json and
+      # runs after build, failing the pipeline if a bundle blows its budget.
+      - run: pnpm exec nx affected -t lint test build size-check --parallel=3
 
       - run: pnpm exec nx affected -t e2e --parallel=1

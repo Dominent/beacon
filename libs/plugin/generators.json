@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "name": "@beacon/plugin",
+  "version": "0.0.1",
+  "generators": {
+    "feature": {
+      "factory": "./src/generators/feature/generator",
+      "schema": "./src/generators/feature/schema.json",
+      "description": "Scaffold a feature library with the correct type/scope tags so the architecture is enforced by construction."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "executors": {
+    "size-check": {
+      "implementation": "./src/executors/size-check/executor",
+      "schema": "./src/executors/size-check/schema.json",
+      "description": "Fail the task if a project's built JS exceeds its size budget."
+    }
+  }
+}
