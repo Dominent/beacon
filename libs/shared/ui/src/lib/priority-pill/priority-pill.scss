@@ -1,0 +1,12 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--bc-space-2);
+  border-radius: var(--bc-radius-pill);
+  font-size: var(--bc-font-size-sm);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--hue, var(--bc-color-text-muted));
+  background: color-mix(in srgb, var(--hue, #888) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hue, #888) 30%, transparent);
+}

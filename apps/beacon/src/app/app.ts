@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { SettingsService } from '@beacon/data-access';
+import { Button } from '@beacon/ui';
 
 @Component({
-  imports: [NxWelcome, RouterModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button],
   selector: 'bc-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected title = 'beacon';
+  protected readonly title = signal('Beacon');
+  protected readonly settings = inject(SettingsService);
 }

@@ -1,2 +1,21 @@
-<bc-nx-welcome></bc-nx-welcome>
-<router-outlet></router-outlet>
+<header class="app-shell__bar">
+  <a class="app-shell__brand" routerLink="/">{{ title() }}</a>
+  <nav class="app-shell__nav">
+    <a routerLink="/issues" routerLinkActive="is-active">Issues</a>
+    <a routerLink="/board" routerLinkActive="is-active">Board</a>
+    <a routerLink="/dashboard" routerLinkActive="is-active">Dashboard</a>
+  </nav>
+
+  <span class="app-shell__spacer"></span>
+
+  <button bc-button variant="ghost" size="sm" (click)="settings.toggleDensity()">
+    {{ settings.density() === 'compact' ? 'Comfortable' : 'Compact' }}
+  </button>
+  <button bc-button variant="ghost" size="sm" (click)="settings.toggleTheme()">
+    {{ settings.theme() === 'dark' ? '☀ Light' : '☾ Dark' }}
+  </button>
+</header>
+
+<main class="app-shell__main">
+  <router-outlet />
+</main>

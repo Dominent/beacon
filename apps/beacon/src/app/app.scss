@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--bc-space-5);
+  padding: 0 var(--bc-space-5);
+  height: 56px;
+  background: var(--bc-color-surface);
+  border-bottom: 1px solid var(--bc-color-border);
+}
+
+.app-shell__brand {
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  color: var(--bc-color-text);
+}
+
+.app-shell__nav {
+  display: flex;
+  gap: var(--bc-space-4);
+
+  a {
+    text-decoration: none;
+    color: var(--bc-color-text-muted);
+    padding: var(--bc-space-1) 0;
+    border-bottom: 2px solid transparent;
+
+    &.is-active {
+      color: var(--bc-color-text);
+      border-bottom-color: var(--bc-color-accent);
+    }
+  }
+}
+
+.app-shell__spacer {
+  flex: 1;
+}
+
+.app-shell__main {
+  flex: 1;
+  padding: var(--bc-space-5);
+}

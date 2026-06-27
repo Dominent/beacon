@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "bc",
   "sourceRoot": "apps/beacon/src",
-  "tags": [],
+  "tags": ["type:app", "scope:shell"],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
@@ -26,6 +26,9 @@
         "styles": [
           "apps/beacon/src/styles.scss"
         ],
+        "stylePreprocessorOptions": {
+          "includePaths": ["libs/shared/ui/src/lib/styles"]
+        },
         "server": "apps/beacon/src/main.server.ts",
         "ssr": {
           "entry": "apps/beacon/src/server.ts"
@@ -70,6 +73,15 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "outputs": ["{workspaceRoot}/coverage/apps/beacon"],
+      "options": {
+        "buildTarget": "beacon:build:development",
+        "tsConfig": "apps/beacon/tsconfig.spec.json",
+        "runner": "vitest"
+      }
     },
     "serve-static": {
       "continuous": true,

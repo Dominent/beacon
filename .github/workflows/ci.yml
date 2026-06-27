@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Needed by nrwl/nx-set-shas to read previous successful workflow runs.
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so `nx affected` can diff against the base SHA.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Derives the correct base/head SHAs for `nx affected` on push and PR.
+      - uses: nrwl/nx-set-shas@v4
+
+      # When Nx Cloud is connected (P5), distribute across agents:
+      # - run: pnpm exec nx-cloud start-ci-run --distribute-on="dynamic" --stop-agents-after="e2e-ci"
+
+      # Only build/lint/test the projects affected by this change.
+      - run: pnpm exec nx affected -t lint test build --parallel=3
+
+      - run: pnpm exec nx affected -t e2e --parallel=1

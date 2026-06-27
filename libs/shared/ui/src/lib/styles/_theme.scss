@@ -1,0 +1,21 @@
+// Theming contract: re-declare semantic tokens under a data-attribute.
+// The SettingsService (plain signals) writes [data-theme] / [data-density] on
+// <html> via an effect(), so switching is reactive and zero-flash.
+
+[data-theme='dark'] {
+  --bc-color-bg: #0b1120;
+  --bc-color-surface: #111827;
+  --bc-color-surface-hover: #1a2233;
+  --bc-color-border: #1f2937;
+  --bc-color-text: #e5e7eb;
+  --bc-color-text-muted: #94a3b8;
+  --bc-color-accent: #60a5fa;
+  --bc-color-accent-contrast: #0b1120;
+  --bc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+// Density: trade vertical rhythm for information density.
+[data-density='compact'] {
+  --bc-row-padding-y: 6px;
+  --bc-space-5: 16px;
+}

@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--bc-color-surface-hover) 25%,
+    var(--bc-color-border) 37%,
+    var(--bc-color-surface-hover) 63%
+  );
+  background-size: 400% 100%;
+  animation: bc-skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes bc-skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation: none;
+  }
+}

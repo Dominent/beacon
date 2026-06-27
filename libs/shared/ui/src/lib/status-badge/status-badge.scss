@@ -1,0 +1,15 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bc-space-2);
+  font-size: var(--bc-font-size-sm);
+  color: var(--bc-color-text-muted);
+  white-space: nowrap;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot, var(--bc-color-text-muted));
+}
