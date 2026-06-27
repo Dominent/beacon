@@ -1,0 +1,11 @@
+{
+  "name": "beacon-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/beacon-e2e/src",
+  "implicitDependencies": [
+    "beacon"
+  ],
+  "// targets": "to see all targets run: nx show project beacon-e2e --web",
+  "targets": {}
+}
