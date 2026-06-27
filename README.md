@@ -5,6 +5,9 @@ A small but deliberately-built **issue tracker**, used to showcase modern Angula
 intentionally modest in surface so that *every architectural decision is
 explainable* — which is the point of the exercise.
 
+**🔗 Live demo:** https://beacon-petromilpavlovs-projects.vercel.app
+*(static SPA + serverless API; SSR and the live SSE feed run locally — see [Deployment](#deployment))*
+
 > Built for the Push-Based technical interview. See
 > [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) for the guided tour and Q&A map,
 > and [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for the Core Web Vitals story.
@@ -96,17 +99,61 @@ full project graph interactively.
 
 ---
 
-## What's demonstrated
+## Requirements coverage
 
-- **Architecture** — layered libs, enforced boundaries, standalone + `inject()`,
-  lazy routes, custom **pipe** (`bcRelativeTime`) & **directive** (`bcTooltip`).
-- **Reactivity & state** — Signals, `computed`, `effect`, NgRx SignalStore, RxJS
-  (`debounceTime`/`switchMap`/`scan`), the Signals↔RxJS bridge.
-- **Performance** — zoneless CD, `@defer`, lazy loading, CDK virtual scroll,
-  `@for; track`, sized placeholders (CLS 0). See [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
-- **Nx** — domain/layer libraries, tag boundaries, a local **plugin**
-  (generator + executor + **task inference**), cache-correct inputs, `affected`
-  CI. See [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md#nx).
+How each requirement from the brief is addressed (the walkthrough maps each to a
+file: [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)).
+
+### 1. Component architecture, design patterns, scalability
+| Requirement | Where |
+|---|---|
+| Maintainable, scalable structure | `domain × layer` libs; lint-enforced tag boundaries |
+| Latest Angular + core concepts | Angular 21, standalone, zoneless, new control flow, `@defer` |
+| Idiomatic DI | `inject()`, functional interceptors, `provideBeaconDataAccess()` |
+| Idiomatic Pipes | `bcRelativeTime` pure pipe ([relative-time.pipe.ts](libs/shared/ui/src/lib/pipes/relative-time.pipe.ts)) |
+| Idiomatic Directives | `bcTooltip` (Renderer2, host listeners — [tooltip.directive.ts](libs/shared/ui/src/lib/directives/tooltip.directive.ts)) |
+| Idiomatic Routing | lazy `loadComponent`, `withComponentInputBinding()` |
+
+### 2. Reactivity & state management
+| Requirement | Where |
+|---|---|
+| Data flow & state | `IssuesStore` (SignalStore) normalizes streams → signals |
+| RxJS knowledge | debounced/cancellable search + SSE (`debounceTime`/`switchMap`/`scan`) |
+| Signal-based state | `signal`/`computed`/`effect`, SignalStore, plain-signals services |
+| Justify Signals-vs-RxJS, Service-vs-Store | see decisions table above + walkthrough |
+
+### 3. Performance & optimization — see [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
+| Requirement | Where |
+|---|---|
+| Change detection (explain) | **zoneless**; CD on signal change/events |
+| Bundle size (lazy loading, deferrable views) | lazy routes + `@defer` charts |
+| Rendering (layout thrash, efficient DOM) | CDK virtual scroll, `@for; track`, transform-based drag |
+| INP / CLS / LCP (cause, analyze, improve) | measured: **LCP ~92 ms, CLS 0**; cause→fix table |
+
+### 4. Nx — see [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md#nx)
+| Requirement | Where |
+|---|---|
+| Scalable library structure, code reuse, boundaries | `feature/ui/data-access/util` × scope; `@nx/enforce-module-boundaries` |
+| DX automation (custom executors, task inference) | local plugin: generator + **executor** + **inference** ([libs/plugin](libs/plugin)) |
+| Performance & CI/CD, **Nx Cloud** | `nx affected` CI; Nx Cloud remote cache + distribution |
+| Caching: how it works, pitfalls, tuning | `nx.json` named inputs; pitfalls in the walkthrough |
+
+---
+
+## Deployment
+
+Deployed to Vercel as a **static SPA + a serverless function for the API**
+(same origin). See [vercel.json](vercel.json) and [api/index.ts](api/index.ts).
+
+Because Vercel functions are serverless, the live demo differs from local in
+three ways (all work fully when run locally with `nx serve`):
+
+- **CSR, not SSR** — no persistent Node server to host the SSR renderer.
+- **The live SSE feed doesn't tick** — functions can't hold long-lived connections.
+- **Writes don't persist** across requests — the API is stateless in-memory.
+
+The base API URL is environment-driven (`localhost:3333` in dev, relative
+same-origin in prod) via `fileReplacements`.
 
 ---
 
