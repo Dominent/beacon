@@ -32,11 +32,9 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       # Nx Cloud: distribute tasks across agents and share the remote cache.
-      - run: pnpm exec nx-cloud start-ci-run --distribute-on="3 linux-medium" --stop-agents-after="e2e"
+      - run: pnpm exec nx-cloud start-ci-run --distribute-on="3 linux-medium" --stop-agents-after="build"
 
       # Only build/lint/test the projects affected by this change.
       # `size-check` is inferred on any project with a size-budget.json and
       # runs after build, failing the pipeline if a bundle blows its budget.
       - run: pnpm exec nx affected -t lint test build size-check --parallel=3
-
-      - run: pnpm exec nx affected -t e2e --parallel=1

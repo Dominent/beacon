@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {},
   "private": true,
+  "packageManager": "pnpm@10.29.3",
   "dependencies": {
     "@angular-devkit/build-angular": "~21.2.0",
     "@angular/cdk": "^21.2.14",
