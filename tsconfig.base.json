@@ -24,6 +24,9 @@
       ],
       "@beacon/issues-feature-detail": [
         "./libs/issues/feature-detail/src/index.ts"
+      ],
+      "@beacon/issues-feature-board": [
+        "./libs/issues/feature-board/src/index.ts"
       ]
     }
   },

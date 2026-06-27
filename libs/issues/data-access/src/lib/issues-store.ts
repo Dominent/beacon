@@ -58,19 +58,17 @@ export const IssuesStore = signalStore(
   withEntities<Issue>(),
   withState<IssuesState>({ filter: EMPTY_FILTER, loading: false, loaded: false }),
   withComputed((store) => {
-    // Server filters for efficiency, but a client-side pass guarantees the view
-    // always matches the active filter even as live SSE upserts stream in.
-    const visible = computed(() =>
-      sortByPriority(filterIssues(store.entities(), store.filter()))
-    );
+    // One client-side filter pass feeds BOTH the list and the board, and guards
+    // the view against live SSE upserts that don't match the active filter.
+    const filtered = computed(() => filterIssues(store.entities(), store.filter()));
     return {
-      visible,
-      openCount: computed(() => visible().filter(isActive).length),
+      visible: computed(() => sortByPriority(filtered())),
+      openCount: computed(() => filtered().filter(isActive).length),
       columns: computed(() =>
         ISSUE_STATUSES.map((status) => ({
           status,
           label: STATUS_LABELS[status],
-          issues: store.entities().filter((issue) => issue.status === status),
+          issues: filtered().filter((issue) => issue.status === status),
         }))
       ),
     };

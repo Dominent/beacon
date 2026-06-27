@@ -1,0 +1,29 @@
+<div class="board" cdkDropListGroup>
+  @for (column of store.columns(); track column.status) {
+    <section class="board__col">
+      <header class="board__col-head">
+        <bc-status-badge [status]="column.status" />
+        <span class="board__count">{{ column.issues.length }}</span>
+      </header>
+
+      <div
+        class="board__list"
+        cdkDropList
+        [cdkDropListData]="column.status"
+        (cdkDropListDropped)="onDrop($event)"
+      >
+        @for (issue of column.issues; track issue.id) {
+          <article class="board__card" cdkDrag [cdkDragData]="issue">
+            <div class="board__card-top">
+              <a class="board__key" [routerLink]="['/issues', issue.id]">{{ issue.key }}</a>
+              <bc-priority-pill [priority]="issue.priority" />
+            </div>
+            <p class="board__card-title">{{ issue.title }}</p>
+          </article>
+        } @empty {
+          <p class="board__empty">—</p>
+        }
+      </div>
+    </section>
+  }
+</div>
