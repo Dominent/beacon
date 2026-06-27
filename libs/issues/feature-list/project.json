@@ -1,0 +1,13 @@
+{
+  "name": "issues-feature-list",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/issues/feature-list/src",
+  "prefix": "bc",
+  "projectType": "library",
+  "tags": ["type:feature", "scope:issues"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

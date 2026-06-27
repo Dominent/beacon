@@ -16,7 +16,15 @@
     "paths": {
       "@beacon/util": ["./libs/shared/util/src/index.ts"],
       "@beacon/ui": ["./libs/shared/ui/src/index.ts"],
-      "@beacon/data-access": ["./libs/shared/data-access/src/index.ts"]
+      "@beacon/data-access": ["./libs/shared/data-access/src/index.ts"],
+      "@beacon/issues-data-access": ["./libs/issues/data-access/src/index.ts"],
+      "@beacon/issues-ui": ["./libs/issues/ui/src/index.ts"],
+      "@beacon/issues-feature-list": [
+        "./libs/issues/feature-list/src/index.ts"
+      ],
+      "@beacon/issues-feature-detail": [
+        "./libs/issues/feature-detail/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

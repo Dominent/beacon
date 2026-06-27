@@ -1,0 +1,59 @@
+<section class="list">
+  <header class="list__toolbar">
+    <input
+      class="list__search"
+      type="search"
+      placeholder="Search issues…"
+      [value]="store.filter().search"
+      (input)="onSearch($event)"
+    />
+
+    <div class="list__filters">
+      @for (status of statuses; track status) {
+        <button
+          bc-button
+          size="sm"
+          [variant]="isStatusActive(status) ? 'primary' : 'ghost'"
+          (click)="toggleStatus(status)"
+        >
+          {{ statusLabel(status) }}
+        </button>
+      }
+    </div>
+
+    <div class="list__filters">
+      @for (priority of priorities; track priority) {
+        <button
+          bc-button
+          size="sm"
+          [variant]="isPriorityActive(priority) ? 'primary' : 'ghost'"
+          (click)="togglePriority(priority)"
+        >
+          {{ priorityLabel(priority) }}
+        </button>
+      }
+    </div>
+
+    <span class="list__count">{{ store.openCount() }} open</span>
+  </header>
+
+  @if (store.loading() && !store.loaded()) {
+    <div class="list__skeletons">
+      @for (n of skeletons; track n) {
+        <bc-skeleton height="44px" />
+      }
+    </div>
+  } @else if (store.visible().length === 0) {
+    <p class="list__empty">No issues match your filter.</p>
+  } @else {
+    <cdk-virtual-scroll-viewport itemSize="45" class="list__viewport">
+      <a
+        *cdkVirtualFor="let issue of store.visible(); trackBy: trackById"
+        class="list__row"
+        [routerLink]="['/issues', issue.id]"
+      >
+        <bc-issue-card [issue]="issue" />
+      </a>
+    </cdk-virtual-scroll-viewport>
+  }
+</section>

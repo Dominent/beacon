@@ -1,0 +1,13 @@
+{
+  "name": "issues-ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/issues/ui/src",
+  "prefix": "bc",
+  "projectType": "library",
+  "tags": ["type:ui", "scope:issues"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

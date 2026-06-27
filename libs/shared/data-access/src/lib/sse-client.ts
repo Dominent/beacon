@@ -14,7 +14,8 @@ export class SseClient {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   connect<T>(path: string): Observable<T> {
-    if (!this.isBrowser) {
+    // Guard SSR and any environment without EventSource (e.g. jsdom under test).
+    if (!this.isBrowser || typeof EventSource === 'undefined') {
       return EMPTY;
     }
     return new Observable<T>((subscriber) => {

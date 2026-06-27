@@ -1,0 +1,9 @@
+@let i = issue();
+
+<span class="card__key">{{ i.key }}</span>
+<span class="card__title">{{ i.title }}</span>
+<bc-priority-pill [priority]="i.priority" />
+<bc-status-badge [status]="i.status" />
+<span class="card__updated" [bcTooltip]="'Updated ' + (i.updatedAt | bcRelativeTime)">
+  {{ i.updatedAt | bcRelativeTime }}
+</span>

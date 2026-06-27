@@ -1,0 +1,37 @@
+@let current = issue();
+
+@if (current) {
+  <a routerLink="/issues" class="detail__back">← Back to issues</a>
+
+  <article class="detail">
+    <header class="detail__head">
+      <span class="detail__key">{{ current.key }}</span>
+      <bc-priority-pill [priority]="current.priority" />
+    </header>
+
+    <h1 class="detail__title">{{ current.title }}</h1>
+    <p class="detail__desc">{{ current.description }}</p>
+
+    <div class="detail__statusbar">
+      <span class="detail__label">Status</span>
+      @for (status of statuses; track status) {
+        <button
+          bc-button
+          size="sm"
+          [variant]="current.status === status ? 'primary' : 'ghost'"
+          (click)="changeStatus(status)"
+        >
+          {{ statusLabel(status) }}
+        </button>
+      }
+    </div>
+
+    <footer class="detail__meta">
+      <bc-status-badge [status]="current.status" />
+      <span>Updated {{ current.updatedAt | bcRelativeTime }}</span>
+      <span>{{ current.commentCount }} comments</span>
+    </footer>
+  </article>
+} @else {
+  <p class="detail__loading">Loading issue {{ id() }}…</p>
+}

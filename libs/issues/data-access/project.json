@@ -1,0 +1,13 @@
+{
+  "name": "issues-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/issues/data-access/src",
+  "prefix": "bc",
+  "projectType": "library",
+  "tags": ["type:data-access", "scope:issues"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
