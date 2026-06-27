@@ -18,4 +18,9 @@ export const appRoutes: Route[] = [
     loadComponent: () =>
       import('@beacon/issues-feature-board').then((m) => m.IssuesBoard),
   },
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('@beacon/dashboard-feature').then((m) => m.Dashboard),
+  },
 ];

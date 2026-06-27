@@ -88,3 +88,10 @@ export const PRIORITY_RANK: Record<IssuePriority, number> = {
   medium: 2,
   low: 3,
 };
+
+/** Dashboard aggregates returned by `/api/stats`. */
+export interface IssueStats {
+  total: number;
+  byStatus: Record<IssueStatus, number>;
+  byPriority: Record<IssuePriority, number>;
+}

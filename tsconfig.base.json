@@ -27,7 +27,11 @@
       ],
       "@beacon/issues-feature-board": [
         "./libs/issues/feature-board/src/index.ts"
-      ]
+      ],
+      "@beacon/dashboard-data-access": [
+        "./libs/dashboard/data-access/src/index.ts"
+      ],
+      "@beacon/dashboard-feature": ["./libs/dashboard/feature/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

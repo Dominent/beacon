@@ -1,0 +1,61 @@
+<section class="dash">
+  <header class="dash__cards">
+    <div class="dash__card">
+      <span class="dash__num">{{ service.stats()?.total ?? '—' }}</span>
+      <span class="dash__cap">Total issues</span>
+    </div>
+    <div class="dash__card">
+      <span class="dash__num">{{ openCount() }}</span>
+      <span class="dash__cap">Open</span>
+    </div>
+    <div class="dash__card">
+      <span class="dash__num">{{ service.stats()?.byStatus?.done ?? '—' }}</span>
+      <span class="dash__cap">Done</span>
+    </div>
+  </header>
+
+  <!--
+    @defer keeps the charts out of the initial bundle; `hydrate on viewport`
+    means they're SSR-rendered then hydrated only when scrolled into view
+    (incremental hydration). The sized skeleton placeholder reserves space → CLS 0.
+  -->
+  @defer (on viewport; hydrate on viewport) {
+    <div class="dash__charts">
+      <article class="dash__panel">
+        <h3 class="dash__panel-title">By status</h3>
+        <bc-bar-chart [data]="statusData()" />
+      </article>
+      <article class="dash__panel">
+        <h3 class="dash__panel-title">By priority</h3>
+        <bc-bar-chart [data]="priorityData()" />
+      </article>
+    </div>
+  } @placeholder {
+    <div class="dash__charts">
+      <bc-skeleton height="200px" />
+      <bc-skeleton height="200px" />
+    </div>
+  } @loading (minimum 250ms) {
+    <div class="dash__charts">
+      <bc-skeleton height="200px" />
+      <bc-skeleton height="200px" />
+    </div>
+  } @error {
+    <p class="dash__muted">Couldn't load charts.</p>
+  }
+
+  <section class="dash__panel">
+    <h3 class="dash__panel-title">Live activity</h3>
+    <div class="dash__feed">
+      @for (issue of service.activity(); track issue.id) {
+        <div class="dash__event">
+          <bc-status-badge [status]="issue.status" />
+          <span class="dash__event-title">{{ issue.key }} · {{ issue.title }}</span>
+          <span class="dash__event-time">{{ issue.updatedAt | bcRelativeTime }}</span>
+        </div>
+      } @empty {
+        <p class="dash__muted">Waiting for live updates…</p>
+      }
+    </div>
+  </section>
+</section>
