@@ -31,8 +31,8 @@ jobs:
       # Derives the correct base/head SHAs for `nx affected` on push and PR.
       - uses: nrwl/nx-set-shas@v4
 
-      # When Nx Cloud is connected (P5), distribute across agents:
-      # - run: pnpm exec nx-cloud start-ci-run --distribute-on="dynamic" --stop-agents-after="e2e-ci"
+      # Nx Cloud: distribute tasks across agents and share the remote cache.
+      - run: pnpm exec nx-cloud start-ci-run --distribute-on="3 linux-medium" --stop-agents-after="e2e"
 
       # Only build/lint/test the projects affected by this change.
       # `size-check` is inferred on any project with a size-budget.json and
