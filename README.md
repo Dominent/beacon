@@ -1,101 +1,116 @@
-# Beacon
+# Beacon — an Angular + Nx showcase
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A small but deliberately-built **issue tracker**, used to showcase modern Angular
+(21, **zoneless**, signals) inside a scalable **Nx 23** monorepo. The app is
+intentionally modest in surface so that *every architectural decision is
+explainable* — which is the point of the exercise.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+> Built for the Push-Based technical interview. See
+> [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) for the guided tour and Q&A map,
+> and [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for the Core Web Vitals story.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+---
 
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx serve beacon
-```
-
-To create a production bundle:
+## Quick start
 
 ```sh
-npx nx build beacon
+pnpm install
+
+# Terminal 1 — the mock API (REST + SSE) on :3333
+pnpm nx serve api          # or: node dist/apps/api/main.js after `nx build api`
+
+# Terminal 2 — the Angular app (SSR) on :4200
+pnpm nx serve beacon
 ```
 
-To see all available targets to run for a project, run:
+Open http://localhost:4200 → Issues list, Board, Detail, Dashboard.
+
+Everyday commands:
 
 ```sh
-npx nx show project beacon
+pnpm nx run-many -t lint test build   # everything
+pnpm nx affected -t lint test build   # only what changed
+pnpm nx graph                          # explore the project graph
+pnpm nx g @beacon/plugin:feature --domain=issues --name=timeline   # scaffold a feature
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+---
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Architecture at a glance
 
-## Add new projects
+A **domain × layer** library structure with **lint-enforced** boundaries.
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
+```
+apps/
+  beacon        # thin SSR shell: routes, providers, layout
+  api           # express mock API (REST + aggregates + SSE)
+libs/
+  issues/       feature-list · feature-detail · feature-board · data-access · ui
+  dashboard/    feature · data-access
+  shared/       ui (design system) · data-access (http/sse/settings) · util (model)
+  plugin/       local Nx plugin (generator + executor + inference)
 ```
 
-To generate a new library, use:
+Two tag dimensions drive the rules (see [eslint.config.mjs](eslint.config.mjs)):
 
-```sh
-npx nx g @nx/angular:lib mylib
+- **type:** `app → feature → ui / data-access → util` — a `ui` lib physically
+  cannot import a store; lint fails in CI if it tries.
+- **scope:** `issues`, `dashboard`, `shared`, `shell` — domains are isolated;
+  cross-domain reuse only goes through `shared`.
+
+```mermaid
+flowchart TD
+  app["type:app<br/>(beacon shell)"] --> feature["type:feature"]
+  feature --> ui["type:ui"]
+  feature --> da["type:data-access"]
+  feature --> util["type:util"]
+  ui --> util
+  da --> util
+  classDef l fill:#1e293b,stroke:#475569,color:#e2e8f0;
+  class app,feature,ui,da,util l;
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+Arrows are the *only* allowed dependencies. `ui → data-access` is absent by
+design — and enforced. That single ruleset is the answer to *"how does this
+scale to 100+ routes and 10 developers?"* — run `pnpm nx graph` to explore the
+full project graph interactively.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Boundary rule | Proven by |
+|---|---|
+| `ui` cannot depend on `data-access` | lint error on a probe import |
+| `dashboard` cannot import `issues` | lint error on a probe import |
 
-## Set up CI!
+---
 
-### Step 1
+## Key decisions (the "why")
 
-To connect to Nx Cloud, run the following command:
+| Decision | Why |
+|---|---|
+| **Zoneless** change detection | No zone.js (~13 kB lighter); CD driven by signal reads + events → fewer long tasks, better INP |
+| **NgRx SignalStore** for issues | Entity collection + derived selectors + optimistic writes shared across list/board/detail — what a store is *for* |
+| **Plain-signals service** for dashboard & settings | Read-only derived state / two scalars — a store would be ceremony |
+| **RxJS** only for typeahead + SSE | Debounce/cancellation and push-streams are RxJS's home turf; bridged to signals via `rxMethod`/`toSignal` |
+| **SSR + incremental hydration** | Real LCP/INP story; `@defer (hydrate on viewport)` charts |
+| **SCSS design tokens** (no Tailwind) | Semantic CSS custom properties → runtime theming as a data-attribute swap; `ui` libs stay framework-pure |
+| **Angular 21, not 22** | `@nx/angular@23` + `@ngrx/signals@21` peer-cap at Angular 21; "latest" is a property of the whole dependency graph |
 
-```sh
-npx nx connect
-```
+---
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+## What's demonstrated
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **Architecture** — layered libs, enforced boundaries, standalone + `inject()`,
+  lazy routes, custom **pipe** (`bcRelativeTime`) & **directive** (`bcTooltip`).
+- **Reactivity & state** — Signals, `computed`, `effect`, NgRx SignalStore, RxJS
+  (`debounceTime`/`switchMap`/`scan`), the Signals↔RxJS bridge.
+- **Performance** — zoneless CD, `@defer`, lazy loading, CDK virtual scroll,
+  `@for; track`, sized placeholders (CLS 0). See [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+- **Nx** — domain/layer libraries, tag boundaries, a local **plugin**
+  (generator + executor + **task inference**), cache-correct inputs, `affected`
+  CI. See [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md#nx).
 
-### Step 2
+---
 
-Use the following command to configure a CI workflow for your workspace:
+## Stack
 
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Angular 21.2 (zoneless, SSR) · Nx 23.0.1 · NgRx Signals 21 · Angular CDK 21 ·
+TypeScript 5.9 · Vitest · Playwright · express · pnpm.
