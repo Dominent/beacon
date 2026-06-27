@@ -75,7 +75,7 @@
         "serveStaticTargetName": "serve-static"
       }
     },
-    "@beacon/plugin"
+    "./libs/plugin/inference.mjs"
   ],
   "generators": {
     "@nx/angular:application": {

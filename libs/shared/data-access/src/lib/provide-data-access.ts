@@ -19,6 +19,9 @@ export function provideBeaconDataAccess(baseUrl?: string): EnvironmentProviders 
       withFetch(),
       withInterceptors([baseUrlInterceptor, errorInterceptor])
     ),
-    ...(baseUrl ? [{ provide: API_BASE_URL, useValue: baseUrl }] : []),
+    // Note: `''` is a valid value (relative same-origin), so check for undefined.
+    ...(baseUrl !== undefined
+      ? [{ provide: API_BASE_URL, useValue: baseUrl }]
+      : []),
   ]);
 }

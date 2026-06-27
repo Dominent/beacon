@@ -7,6 +7,7 @@ import {
   withIncrementalHydration,
 } from '@angular/platform-browser';
 import { provideBeaconDataAccess } from '@beacon/data-access';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay(), withIncrementalHydration()),
     // Bind route params/query directly to component inputs (used by the issue list filter).
     provideRouter(appRoutes, withComponentInputBinding()),
-    // HttpClient (fetch) + functional interceptor chain. Base URL is absolute so SSR fetches work.
-    provideBeaconDataAccess(),
+    // HttpClient (fetch) + functional interceptor chain. Base URL is per-environment
+    // (absolute in dev for cross-origin :3333; relative same-origin in production).
+    provideBeaconDataAccess(environment.apiBaseUrl),
   ],
 };

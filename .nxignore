@@ -1,0 +1,5 @@
+# Generated caches/outputs must not be scanned for projects.
+.angular
+.vercel
+dist
+tmp

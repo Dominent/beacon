@@ -1,3 +1,5 @@
+// Relative import so the Vercel serverless bundle inlines @beacon/util.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   Issue,
   IssuePriority,
@@ -7,7 +9,7 @@ import {
   Label,
   Project,
   User,
-} from '@beacon/util';
+} from '../../../../libs/shared/util/src';
 
 /**
  * In-memory seed data for the mock API. The API imports the SAME domain model

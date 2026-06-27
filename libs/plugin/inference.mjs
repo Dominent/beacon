@@ -1,36 +1,27 @@
-import {
-  CreateNodesContextV2,
-  CreateNodesV2,
-  createNodesFromFiles,
-  readJsonFile,
-} from '@nx/devkit';
+// Task-inference entry (registered in nx.json `plugins`).
+//
+// Authored as plain ESM (.mjs) on purpose: Nx loads graph plugins during
+// `nx build` graph processing, where a TypeScript loader isn't guaranteed (e.g.
+// CI / Vercel). A .mjs file loads natively everywhere. The generator and
+// executor stay in TypeScript — they're loaded by Nx's generator/executor
+// machinery, not during graph processing.
+import { createNodesFromFiles, readJsonFile } from '@nx/devkit';
 import { existsSync } from 'fs';
 import { dirname, join } from 'path';
 
-interface SizeBudget {
-  maxKb?: number;
-  outputPath?: string;
-}
-
-/**
- * Task inference (Nx "Crystal"): any project containing a `size-budget.json`
- * automatically gets a `size-check` target wired to our executor — no manual
- * `project.json` edits. Drop the config file, get the target. This removes a
- * real workflow bottleneck (per-project target boilerplate).
- */
-export const createNodesV2: CreateNodesV2 = [
+export const createNodesV2 = [
   '**/size-budget.json',
-  async (configFiles, _options, context) => {
+  async (configFiles, options, context) => {
     return createNodesFromFiles(
       (configFile, _opts, ctx) => createTargetForBudget(configFile, ctx),
       configFiles,
-      _options,
+      options,
       context
     );
   },
 ];
 
-function createTargetForBudget(configFile: string, context: CreateNodesContextV2) {
+function createTargetForBudget(configFile, context) {
   const projectRoot = dirname(configFile);
 
   // Only attach to actual project roots.
@@ -41,7 +32,7 @@ function createTargetForBudget(configFile: string, context: CreateNodesContextV2
     return {};
   }
 
-  const budget = readJsonFile<SizeBudget>(join(context.workspaceRoot, configFile));
+  const budget = readJsonFile(join(context.workspaceRoot, configFile));
 
   return {
     projects: {
