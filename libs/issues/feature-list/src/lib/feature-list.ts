@@ -11,6 +11,7 @@ import {
   ISSUE_PRIORITIES,
   ISSUE_STATUSES,
   PRIORITY_LABELS,
+  SortKey,
   STATUS_LABELS,
 } from '@beacon/util';
 
@@ -60,6 +61,13 @@ export class IssuesList {
 
   protected togglePriority(priority: IssuePriority): void {
     this.store.setFilter({ priorities: toggle(this.store.filter().priorities, priority) });
+  }
+
+  /** Sort indicator for a column header: ▲ asc, ▼ desc, blank when inactive. */
+  protected sortArrow(key: SortKey): string {
+    const sort = this.store.sort();
+    if (sort.key !== key) return '';
+    return sort.dir === 'asc' ? ' ▲' : ' ▼';
   }
 
   protected readonly trackById = (_: number, issue: Issue) => issue.id;

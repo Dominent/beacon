@@ -1,14 +1,17 @@
 import { computed, inject } from '@angular/core';
 import { SseClient } from '@beacon/data-access';
 import {
+  DEFAULT_SORT,
   EMPTY_FILTER,
   filterIssues,
   isActive,
   Issue,
   IssueFilter,
+  IssueSort,
   IssueStatus,
   ISSUE_STATUSES,
-  sortByPriority,
+  sortIssues,
+  SortKey,
   STATUS_LABELS,
 } from '@beacon/util';
 import {
@@ -40,6 +43,7 @@ import { IssuesApi } from './issues-api';
 
 interface IssuesState {
   filter: IssueFilter;
+  sort: IssueSort;
   loading: boolean;
   loaded: boolean;
 }
@@ -56,13 +60,18 @@ interface IssuesState {
 export const IssuesStore = signalStore(
   { providedIn: 'root' },
   withEntities<Issue>(),
-  withState<IssuesState>({ filter: EMPTY_FILTER, loading: false, loaded: false }),
+  withState<IssuesState>({
+    filter: EMPTY_FILTER,
+    sort: DEFAULT_SORT,
+    loading: false,
+    loaded: false,
+  }),
   withComputed((store) => {
     // One client-side filter pass feeds BOTH the list and the board, and guards
     // the view against live SSE upserts that don't match the active filter.
     const filtered = computed(() => filterIssues(store.entities(), store.filter()));
     return {
-      visible: computed(() => sortByPriority(filtered())),
+      visible: computed(() => sortIssues(filtered(), store.sort())),
       openCount: computed(() => filtered().filter(isActive).length),
       columns: computed(() =>
         ISSUE_STATUSES.map((status) => ({
@@ -76,6 +85,14 @@ export const IssuesStore = signalStore(
   withMethods((store, api = inject(IssuesApi), sse = inject(SseClient)) => ({
     setFilter(partial: Partial<IssueFilter>): void {
       patchState(store, { filter: { ...store.filter(), ...partial } });
+    },
+
+    /** Click a column: same column toggles asc⇄desc, a new column starts asc. */
+    setSort(key: SortKey): void {
+      const current = store.sort();
+      const dir =
+        current.key === key && current.dir === 'asc' ? 'desc' : 'asc';
+      patchState(store, { sort: { key, dir } });
     },
 
     /** Reactive, debounced, cancellable load — fed the filter SIGNAL on init. */

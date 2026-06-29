@@ -4,6 +4,7 @@ import {
   filterIssues,
   isActive,
   sortByPriority,
+  sortIssues,
 } from './filter-issues';
 
 function makeIssue(overrides: Partial<Issue> = {}): Issue {
@@ -64,6 +65,34 @@ describe('sortByPriority', () => {
     ];
     expect(sortByPriority(input).map((i) => i.id)).toEqual(['b', 'c', 'a']);
     expect(input[0].id).toBe('a'); // original untouched
+  });
+});
+
+describe('sortIssues', () => {
+  const issues = [
+    makeIssue({ id: 'a', key: 'BCN-2', title: 'Beta', priority: 'low', status: 'done', updatedAt: '2026-01-02T00:00:00.000Z' }),
+    makeIssue({ id: 'b', key: 'BCN-10', title: 'Alpha', priority: 'urgent', status: 'backlog', updatedAt: '2026-01-03T00:00:00.000Z' }),
+    makeIssue({ id: 'c', key: 'BCN-1', title: 'Gamma', priority: 'medium', status: 'in_progress', updatedAt: '2026-01-01T00:00:00.000Z' }),
+  ];
+
+  it('sorts by key numerically (asc) and does not mutate input', () => {
+    const result = sortIssues(issues, { key: 'key', dir: 'asc' });
+    expect(result.map((i) => i.key)).toEqual(['BCN-1', 'BCN-2', 'BCN-10']);
+    expect(issues[0].key).toBe('BCN-2'); // original untouched
+  });
+
+  it('sorts by title and reverses on desc', () => {
+    expect(sortIssues(issues, { key: 'title', dir: 'asc' }).map((i) => i.title)).toEqual(['Alpha', 'Beta', 'Gamma']);
+    expect(sortIssues(issues, { key: 'title', dir: 'desc' }).map((i) => i.title)).toEqual(['Gamma', 'Beta', 'Alpha']);
+  });
+
+  it('sorts by priority (urgent → low) and status (backlog → done)', () => {
+    expect(sortIssues(issues, { key: 'priority', dir: 'asc' }).map((i) => i.priority)).toEqual(['urgent', 'medium', 'low']);
+    expect(sortIssues(issues, { key: 'status', dir: 'asc' }).map((i) => i.status)).toEqual(['backlog', 'in_progress', 'done']);
+  });
+
+  it('sorts by updatedAt (oldest → newest asc)', () => {
+    expect(sortIssues(issues, { key: 'updatedAt', dir: 'asc' }).map((i) => i.id)).toEqual(['c', 'a', 'b']);
   });
 });
 

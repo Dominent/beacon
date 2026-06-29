@@ -2,6 +2,7 @@ import {
   Issue,
   IssuePriority,
   IssueStatus,
+  ISSUE_STATUSES,
   PRIORITY_RANK,
 } from '../models/issue.models';
 
@@ -59,6 +60,37 @@ export function sortByPriority(issues: readonly Issue[]): Issue[] {
       ? byPriority
       : b.updatedAt.localeCompare(a.updatedAt);
   });
+}
+
+export type SortKey = 'key' | 'title' | 'priority' | 'status' | 'updatedAt';
+export type SortDir = 'asc' | 'desc';
+
+export interface IssueSort {
+  key: SortKey;
+  dir: SortDir;
+}
+
+export const DEFAULT_SORT: IssueSort = { key: 'priority', dir: 'asc' };
+
+/** Pure, configurable sort over any column. `asc` = natural order per column. */
+export function sortIssues(issues: readonly Issue[], sort: IssueSort): Issue[] {
+  const factor = sort.dir === 'asc' ? 1 : -1;
+  return [...issues].sort((a, b) => factor * compareBy(a, b, sort.key));
+}
+
+function compareBy(a: Issue, b: Issue, key: SortKey): number {
+  switch (key) {
+    case 'key':
+      return a.key.localeCompare(b.key, undefined, { numeric: true });
+    case 'title':
+      return a.title.localeCompare(b.title);
+    case 'priority': // urgent → low
+      return PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
+    case 'status': // backlog → done
+      return ISSUE_STATUSES.indexOf(a.status) - ISSUE_STATUSES.indexOf(b.status);
+    case 'updatedAt': // oldest → newest
+      return a.updatedAt.localeCompare(b.updatedAt);
+  }
 }
 
 export function isActive(issue: Issue): boolean {

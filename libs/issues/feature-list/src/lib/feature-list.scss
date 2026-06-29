@@ -59,15 +59,31 @@
   padding: var(--bc-space-2) var(--bc-space-4);
   border-bottom: 1px solid var(--bc-color-border);
   background: var(--bc-color-surface-hover);
-  font-size: var(--bc-font-size-sm);
-  font-weight: 600;
-  color: var(--bc-color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
 
-.list__head--right {
-  text-align: right;
+  // Sortable column headers (reset native button chrome).
+  button {
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-size: var(--bc-font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bc-color-text-muted);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--bc-color-text);
+    }
+
+    &.list__head--right {
+      text-align: right;
+    }
+  }
 }
 
 .list__viewport {
@@ -113,8 +129,8 @@
     gap: var(--bc-space-3);
   }
 
-  .list__head span:nth-child(3),
-  .list__head span:nth-child(5) {
+  .list__head button:nth-child(3),
+  .list__head button:nth-child(5) {
     display: none;
   }
 }

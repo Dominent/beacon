@@ -48,11 +48,13 @@
   } @else {
     <div class="list__grid">
       <header class="list__head">
-        <span>Key</span>
-        <span>Title</span>
-        <span>Priority</span>
-        <span>Status</span>
-        <span class="list__head--right">Updated</span>
+        <button type="button" (click)="store.setSort('key')">Key{{ sortArrow('key') }}</button>
+        <button type="button" (click)="store.setSort('title')">Title{{ sortArrow('title') }}</button>
+        <button type="button" (click)="store.setSort('priority')">Priority{{ sortArrow('priority') }}</button>
+        <button type="button" (click)="store.setSort('status')">Status{{ sortArrow('status') }}</button>
+        <button type="button" class="list__head--right" (click)="store.setSort('updatedAt')">
+          Updated{{ sortArrow('updatedAt') }}
+        </button>
       </header>
 
       <cdk-virtual-scroll-viewport itemSize="45" class="list__viewport">
