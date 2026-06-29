@@ -35,12 +35,15 @@ export default defineConfig({
       command: 'pnpm exec nx run api:serve',
       url: 'http://localhost:3333/api/stats',
       reuseExistingServer: true,
+      timeout: 180_000,
       cwd: workspaceRoot,
     },
     {
       command: 'pnpm exec nx run beacon:serve',
       url: 'http://localhost:4200',
       reuseExistingServer: true,
+      // The SSR dev server cold-starts slowly in CI — allow generous time.
+      timeout: 180_000,
       cwd: workspaceRoot,
     },
   ],

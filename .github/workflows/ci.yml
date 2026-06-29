@@ -40,3 +40,19 @@ jobs:
       # `size-check` is inferred on any project with a size-budget.json and
       # runs after build, failing the pipeline if a bundle blows its budget.
       - run: pnpm exec nx affected -t lint stylelint test build size-check --parallel=3
+
+  # Playwright e2e runs in its own job (its webServer starts the API + app).
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec nx e2e beacon-e2e
