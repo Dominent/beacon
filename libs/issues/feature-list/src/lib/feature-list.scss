@@ -3,6 +3,10 @@
   flex-direction: column;
   gap: var(--bc-space-4);
   height: calc(100vh - 56px - 2 * var(--bc-space-5));
+
+  // Single source of truth for the column tracks — inherited by the header
+  // AND every issue-card row, so the whole list aligns as one grid.
+  --bc-issue-grid: 88px 1fr 100px 140px 110px;
 }
 
 .list__toolbar {
@@ -35,16 +39,51 @@
   font-size: var(--bc-font-size-sm);
 }
 
-.list__viewport {
+// Bordered box wrapping the header + scroll area as one grid.
+.list__grid {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--bc-color-border);
   border-radius: var(--bc-radius-md);
   background: var(--bc-color-surface);
+  overflow: hidden;
+}
+
+.list__head {
+  display: grid;
+  grid-template-columns: var(--bc-issue-grid);
+  gap: var(--bc-space-4);
+  align-items: center;
+  padding: var(--bc-space-2) var(--bc-space-4);
+  border-bottom: 1px solid var(--bc-color-border);
+  background: var(--bc-color-surface-hover);
+  font-size: var(--bc-font-size-sm);
+  font-weight: 600;
+  color: var(--bc-color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.list__head--right {
+  text-align: right;
+}
+
+.list__viewport {
+  flex: 1;
   overflow: auto;
+
+  // Constrain the CDK content wrapper to the viewport width so rows fill it
+  // (otherwise the grid sizes to max-content and the 1fr title collapses).
+  ::ng-deep .cdk-virtual-scroll-content-wrapper {
+    width: 100%;
+  }
 }
 
 .list__row {
   display: block;
+  width: 100%;
   text-decoration: none;
 
   &:hover {
@@ -62,4 +101,20 @@
   color: var(--bc-color-text-muted);
   padding: var(--bc-space-5);
   text-align: center;
+}
+
+// Narrow viewports: collapse to Key / Title / Status (drop Priority + Updated).
+@media (max-width: 720px) {
+  .list {
+    --bc-issue-grid: 72px 1fr 120px;
+  }
+
+  .list__head {
+    gap: var(--bc-space-3);
+  }
+
+  .list__head span:nth-child(3),
+  .list__head span:nth-child(5) {
+    display: none;
+  }
 }

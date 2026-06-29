@@ -46,14 +46,24 @@
   } @else if (store.visible().length === 0) {
     <p class="list__empty">No issues match your filter.</p>
   } @else {
-    <cdk-virtual-scroll-viewport itemSize="45" class="list__viewport">
-      <a
-        *cdkVirtualFor="let issue of store.visible(); trackBy: trackById"
-        class="list__row"
-        [routerLink]="['/issues', issue.id]"
-      >
-        <bc-issue-card [issue]="issue" />
-      </a>
-    </cdk-virtual-scroll-viewport>
+    <div class="list__grid">
+      <header class="list__head">
+        <span>Key</span>
+        <span>Title</span>
+        <span>Priority</span>
+        <span>Status</span>
+        <span class="list__head--right">Updated</span>
+      </header>
+
+      <cdk-virtual-scroll-viewport itemSize="45" class="list__viewport">
+        <a
+          *cdkVirtualFor="let issue of store.visible(); trackBy: trackById"
+          class="list__row"
+          [routerLink]="['/issues', issue.id]"
+        >
+          <bc-issue-card [issue]="issue" />
+        </a>
+      </cdk-virtual-scroll-viewport>
+    </div>
   }
 </section>

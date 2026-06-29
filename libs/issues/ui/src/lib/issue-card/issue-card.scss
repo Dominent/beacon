@@ -1,6 +1,8 @@
 :host {
   display: grid;
-  grid-template-columns: 72px 1fr auto auto 120px;
+  // Shared column tracks (set by the list so header + every row align). Fixed
+  // tracks — not `auto` — so columns line up across independently-rendered rows.
+  grid-template-columns: var(--bc-issue-grid, 88px 1fr 100px 140px 110px);
   align-items: center;
   gap: var(--bc-space-4);
   padding: var(--bc-row-padding-y) var(--bc-space-4);
@@ -17,6 +19,8 @@
 .card__title {
   font-weight: 500;
   color: var(--bc-color-text);
+  // min-width:0 lets the 1fr track shrink below content so ellipsis kicks in.
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -26,4 +30,16 @@
   text-align: right;
   font-size: var(--bc-font-size-sm);
   color: var(--bc-color-text-muted);
+}
+
+// Narrow viewports: drop Priority + Updated (matches the list's 3-col template).
+@media (max-width: 720px) {
+  :host {
+    gap: var(--bc-space-3);
+  }
+
+  bc-priority-pill,
+  .card__updated {
+    display: none;
+  }
 }
