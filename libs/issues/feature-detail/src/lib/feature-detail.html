@@ -32,6 +32,9 @@
       <span>{{ current.commentCount }} comments</span>
     </footer>
   </article>
+} @else if (notFound()) {
+  <a routerLink="/issues" class="detail__back">← Back to issues</a>
+  <p class="detail__loading">Issue {{ id() }} was not found.</p>
 } @else {
   <p class="detail__loading">Loading issue {{ id() }}…</p>
 }

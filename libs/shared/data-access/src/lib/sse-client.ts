@@ -27,7 +27,9 @@ export class SseClient {
           /* ignore malformed frames (e.g. the initial `ready` event) */
         }
       };
-      source.onerror = () => source.close();
+      // Deliberately do NOT close on error: EventSource auto-reconnects on
+      // transient failures (with the server's `retry:` backoff). Closing here
+      // would permanently kill the live stream.
       return () => source.close();
     });
   }

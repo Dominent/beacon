@@ -31,6 +31,15 @@ export default async function runExecutor(
   const totalBytes = await sumJsBytes(dir);
   const totalKb = Math.round((totalBytes / 1024) * 10) / 10;
 
+  // Guard the false-pass: no JS means the build didn't produce output, not that
+  // we're comfortably under budget.
+  if (totalBytes === 0) {
+    logger.error(
+      `[size-check] FAILED — no JS found at ${options.outputPath}. Did the build run?`
+    );
+    return { success: false };
+  }
+
   logger.info(
     `[size-check] ${options.outputPath}: ${totalKb} KB JS (budget ${maxKb ?? '∞'} KB)`
   );

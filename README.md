@@ -128,7 +128,7 @@ file: [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)).
 | Change detection (explain) | **zoneless**; CD on signal change/events |
 | Bundle size (lazy loading, deferrable views) | lazy routes + `@defer` charts |
 | Rendering (layout thrash, efficient DOM) | CDK virtual scroll, `@for; track`, transform-based drag |
-| INP / CLS / LCP (cause, analyze, improve) | measured: **LCP ~92 ms, CLS 0**; cause→fix table |
+| INP / CLS / LCP (cause, analyze, improve) | cause→fix table + `web-vitals` instrumentation; CLS structurally 0 (sized defer placeholders) |
 
 ### 4. Nx — see [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md#nx)
 | Requirement | Where |

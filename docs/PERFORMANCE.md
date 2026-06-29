@@ -36,24 +36,26 @@ CD-correct by construction.
 - **Virtual scroll** — CDK `*cdkVirtualFor` over the issue list ([feature-list.html](../libs/issues/feature-list/src/lib/feature-list.html)); ~16 rows rendered regardless of result count.
 - **`content-visibility` / containment** — applied *where it helps*: the **board** renders all cards (no virtualization), so `content-visibility: auto` + `contain-intrinsic-size` skip rendering off-screen cards; the **list** is already virtual-scrolled, so its rows use `contain: layout paint` for per-row isolation instead (content-visibility would be redundant there).
 - **Efficient DOM updates** — `@for ... track` everywhere; the board is data-driven (no manual array mutation on drag).
-- **No layout thrash** — bar chart animates `width` only; CDK drag uses transforms (compositor), not `top/left`.
+- **No layout thrash** — the bar chart animates `transform: scaleX` (compositor-only, no layout/paint); CDK drag uses transforms, not `top/left`.
 - **Sized placeholders** — `bc-skeleton` reserves final dimensions → CLS 0.
 
-## Measured (local dev server, dashboard route)
+## How it's instrumented (and a caveat on numbers)
 
-> Local, unthrottled numbers — illustrative of the techniques, **not** production
-> field data. Real numbers need Lighthouse / throttling / field RUM.
+`web-vitals` is wired in [main.ts](../apps/beacon/src/main.ts) →
+[web-vitals.ts](../apps/beacon/src/app/web-vitals.ts): `onLCP/onCLS/onINP` log
+each metric (with its rating) to the console — swap the sink for
+`navigator.sendBeacon('/rum', …)` to collect field data.
 
-| Metric | Value | "Good" threshold |
-|---|---|---|
-| LCP | ~92 ms | < 2500 ms |
-| CLS | **0** | < 0.1 |
-| FCP | ~92 ms | < 1800 ms |
-| TTFB | ~53 ms | < 800 ms |
-| Dashboard route JS (transfer) | ~33 kB | — |
-
-CLS 0 is the headline: the sized `@defer` skeletons mean the charts don't shift
-the layout when they hydrate.
+> ⚠️ **I'm not quoting headline CWV numbers, on purpose.** Anything I can measure
+> here is a localhost, unthrottled dev-server read — that tells you the
+> instrumentation works, *not* that the app is fast in the field. LCP≈FCP on
+> localhost is the tell. Real numbers require **Lighthouse with 4× CPU / Slow-4G
+> throttling** or **field RUM** (CrUX / the `web-vitals` beacon above) — happy to
+> run that live during the walkthrough.
+>
+> What I'll stand behind without a number: **CLS is structurally 0** on the
+> deferred charts because the `@defer` placeholders are sized (`bc-skeleton` +
+> `contain-intrinsic-size`), so nothing reflows when content hydrates.
 
 ## Before / after (the argument)
 

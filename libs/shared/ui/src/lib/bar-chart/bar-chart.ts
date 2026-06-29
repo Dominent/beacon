@@ -9,8 +9,8 @@ export interface BarDatum {
 
 /**
  * Hand-rolled bar chart — no charting dependency (one fewer thing to justify,
- * smaller bundle). Bars animate via `width`/`transform` only, so there's no
- * layout thrash on update.
+ * smaller bundle). Bars animate via `transform: scaleX` (compositor-only), not
+ * `width`, so updates never trigger layout/paint — zero layout thrash.
  */
 @Component({
   selector: 'bc-bar-chart',
@@ -23,7 +23,7 @@ export interface BarDatum {
           <div class="chart__track">
             <div
               class="chart__fill"
-              [style.width.%]="percent(d.value)"
+              [style.transform]="'scaleX(' + fraction(d.value) + ')'"
               [style.background]="d.color || 'var(--bc-color-accent)'"
             ></div>
           </div>
@@ -55,9 +55,11 @@ export interface BarDatum {
       overflow: hidden;
     }
     .chart__fill {
+      width: 100%;
       height: 100%;
       border-radius: var(--bc-radius-pill);
-      transition: width 0.4s ease;
+      transform-origin: left center;
+      transition: transform 0.4s ease;
     }
     .chart__value {
       text-align: right;
@@ -73,7 +75,8 @@ export class BarChart {
     Math.max(1, ...this.data().map((d) => d.value))
   );
 
-  protected percent(value: number): number {
-    return (value / this.max()) * 100;
+  /** 0–1 scale factor for the bar's `scaleX`. */
+  protected fraction(value: number): number {
+    return value / this.max();
   }
 }

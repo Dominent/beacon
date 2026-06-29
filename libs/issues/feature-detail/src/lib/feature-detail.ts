@@ -30,6 +30,10 @@ export class IssueDetail {
 
   protected readonly statuses = ISSUE_STATUSES;
   protected readonly issue = computed(() => this.store.entityMap()[this.id()]);
+  /** Distinguish "still loading" from "loaded, but no such issue" (404). */
+  protected readonly notFound = computed(
+    () => this.store.loaded() && !this.issue()
+  );
 
   protected statusLabel(status: IssueStatus): string {
     return STATUS_LABELS[status];

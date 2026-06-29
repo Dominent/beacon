@@ -8,12 +8,22 @@
 
       <div
         class="board__list"
+        role="list"
+        [attr.aria-label]="column.label"
         cdkDropList
         [cdkDropListData]="column.status"
         (cdkDropListDropped)="onDrop($event)"
       >
         @for (issue of column.issues; track issue.id) {
-          <article class="board__card" cdkDrag [cdkDragData]="issue">
+          <article
+            class="board__card"
+            cdkDrag
+            [cdkDragData]="issue"
+            role="listitem"
+            tabindex="0"
+            [attr.aria-label]="ariaLabel(issue)"
+            (keydown)="onCardKeydown($event, issue)"
+          >
             <div class="board__card-top">
               <a class="board__key" [routerLink]="['/issues', issue.id]">{{ issue.key }}</a>
               <bc-priority-pill [priority]="issue.priority" />

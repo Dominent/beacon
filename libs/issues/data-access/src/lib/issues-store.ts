@@ -127,6 +127,11 @@ export const IssuesStore = signalStore(
       )
     ),
 
+    /** Merge a single issue into the entity map (the SSE stream's effect). */
+    applyServerUpdate(issue: Issue): void {
+      patchState(store, upsertEntity(issue));
+    },
+
     /** Optimistic status change with rollback on failure. */
     async move(id: string, status: IssueStatus): Promise<void> {
       const current = store.entityMap()[id];
