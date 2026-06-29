@@ -80,6 +80,18 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "stylelint": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/.stylelintrc.json",
+        "{workspaceRoot}/libs/**/*.scss",
+        "{workspaceRoot}/apps/**/*.scss"
+      ],
+      "options": {
+        "command": "stylelint \"{libs,apps}/**/*.scss\""
+      }
+    },
     "test": {
       "executor": "@angular/build:unit-test",
       "outputs": ["{workspaceRoot}/coverage/apps/beacon"],

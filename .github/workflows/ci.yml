@@ -39,4 +39,4 @@ jobs:
       # Only build/lint/test the projects affected by this change.
       # `size-check` is inferred on any project with a size-budget.json and
       # runs after build, failing the pipeline if a bundle blows its budget.
-      - run: pnpm exec nx affected -t lint test build size-check --parallel=3
+      - run: pnpm exec nx affected -t lint stylelint test build size-check --parallel=3
