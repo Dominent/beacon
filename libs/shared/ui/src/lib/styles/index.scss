@@ -1,6 +1,7 @@
 // Design-system entry point. The app's global styles `@use` this once.
 @use 'tokens';
 @use 'theme';
+@use 'mixins' as mx;
 
 *,
 *::before,
@@ -24,6 +25,5 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--bc-color-accent);
-  outline-offset: 2px;
+  @include mx.focus-ring;
 }

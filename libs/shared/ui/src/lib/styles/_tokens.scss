@@ -1,61 +1,58 @@
 // Design tokens — the single source of truth for visual style.
 //
-// Two layers: primitives (raw values) → semantic tokens (intent). Components
-// consume ONLY semantic tokens, so re-theming = re-pointing semantics. All
-// tokens are CSS custom properties, so theming is a runtime data-attribute swap
-// (see _theme.scss) with zero recompiled CSS and no flash.
+// The tokens are authored as Sass MAPS (compile-time, DRY) but emitted as CSS
+// CUSTOM PROPERTIES via `@each` (runtime), so theming stays a data-attribute
+// swap with zero recompiled CSS — see _theme.scss.
+@use 'sass:map';
+@use 'functions' as fn;
+@use 'mixins' as mx;
+
+// --- semantic surfaces & text (light theme) ---
+$light-theme: (
+  'color-bg': #f1f5f9,
+  'color-surface': #ffffff,
+  'color-surface-hover': #f8fafc,
+  'color-border': #e2e8f0,
+  'color-text': #0f172a,
+  'color-text-muted': #64748b,
+  'color-accent': #2563eb,
+  'color-accent-contrast': #ffffff,
+  'color-danger': #dc2626,
+);
+
+// --- status & priority hues ---
+$status-hues: (
+  'backlog': #94a3b8,
+  'todo': #64748b,
+  'in_progress': #2563eb,
+  'in_review': #a855f7,
+  'done': #16a34a,
+);
+
+$priority-hues: (
+  'urgent': #ef4444,
+  'high': #f97316,
+  'medium': #eab308,
+  'low': #94a3b8,
+);
+
+// --- scales ---
+$space: (1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 24px);
+$radius: ('sm': 4px, 'md': 8px, 'pill': 999px);
 
 :root {
-  // --- primitives ---------------------------------------------------------
-  --bc-blue-600: #2563eb;
-  --bc-blue-500: #3b82f6;
-  --bc-slate-50: #f8fafc;
-  --bc-slate-100: #f1f5f9;
-  --bc-slate-200: #e2e8f0;
-  --bc-slate-500: #64748b;
-  --bc-slate-900: #0f172a;
-  --bc-white: #ffffff;
-
-  // --- semantic: surfaces & text (light theme defaults) -------------------
-  --bc-color-bg: var(--bc-slate-100);
-  --bc-color-surface: var(--bc-white);
-  --bc-color-surface-hover: var(--bc-slate-50);
-  --bc-color-border: var(--bc-slate-200);
-  --bc-color-text: var(--bc-slate-900);
-  --bc-color-text-muted: var(--bc-slate-500);
-  --bc-color-accent: var(--bc-blue-600);
-  --bc-color-accent-contrast: var(--bc-white);
-  --bc-color-danger: #dc2626;
-
-  // --- semantic: status & priority hues -----------------------------------
-  --bc-status-backlog: #94a3b8;
-  --bc-status-todo: #64748b;
-  --bc-status-in_progress: #2563eb;
-  --bc-status-in_review: #a855f7;
-  --bc-status-done: #16a34a;
-
-  --bc-priority-urgent: #ef4444;
-  --bc-priority-high: #f97316;
-  --bc-priority-medium: #eab308;
-  --bc-priority-low: #94a3b8;
-
-  // --- scale: spacing, radius, typography ---------------------------------
-  --bc-space-1: 4px;
-  --bc-space-2: 8px;
-  --bc-space-3: 12px;
-  --bc-space-4: 16px;
-  --bc-space-5: 24px;
+  @include mx.emit-vars($light-theme);
+  @include mx.emit-vars($status-hues, 'status-');
+  @include mx.emit-vars($priority-hues, 'priority-');
+  @include mx.emit-vars($space, 'space-');
+  @include mx.emit-vars($radius, 'radius-');
 
   // Density-aware row padding (overridden by [data-density]).
-  --bc-row-padding-y: 12px;
-
-  --bc-radius-sm: 4px;
-  --bc-radius-md: 8px;
-  --bc-radius-pill: 999px;
+  --bc-row-padding-y: #{map.get($space, 3)};
 
   --bc-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --bc-font-size-sm: 0.8125rem;
-  --bc-font-size-md: 0.9375rem;
+  --bc-font-size-sm: #{fn.rem(13)};
+  --bc-font-size-md: #{fn.rem(15)};
 
   --bc-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
 }

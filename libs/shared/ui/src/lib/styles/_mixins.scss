@@ -1,0 +1,14 @@
+/// Emit a token map as CSS custom properties: `--bc-<prefix><key>: <value>`.
+/// Keeps the maps as the single source of truth while still producing
+/// *runtime* custom properties (so theming stays a data-attribute swap).
+@mixin emit-vars($map, $prefix: '') {
+  @each $name, $value in $map {
+    --bc-#{$prefix}#{$name}: #{$value};
+  }
+}
+
+/// Consistent keyboard focus ring keyed off the accent token.
+@mixin focus-ring($offset: 2px) {
+  outline: 2px solid var(--bc-color-accent);
+  outline-offset: $offset;
+}
