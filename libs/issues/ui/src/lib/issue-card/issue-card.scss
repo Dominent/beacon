@@ -8,6 +8,10 @@
   padding: var(--bc-row-padding-y) var(--bc-space-4);
   background: var(--bc-color-surface);
   border-bottom: 1px solid var(--bc-color-border);
+  // Isolate each row's layout/paint so a change in one row can't reflow the
+  // others. (The list is virtual-scrolled, so content-visibility would be
+  // redundant here — isolation is the useful containment for these rows.)
+  contain: layout paint;
 }
 
 .card__key {

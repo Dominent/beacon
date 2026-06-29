@@ -34,6 +34,7 @@ CD-correct by construction.
 - **Deferrable views** — `@defer (on viewport; hydrate on viewport)` around the dashboard charts ([dashboard.html](../libs/dashboard/feature/src/lib/dashboard.html)); the chart code is a distinct lazy chunk.
 - **Incremental hydration** — `withIncrementalHydration()` ([app.config.ts](../apps/beacon/src/app/app.config.ts)); deferred blocks are SSR-rendered then hydrated on viewport, cutting initial hydration/JS work.
 - **Virtual scroll** — CDK `*cdkVirtualFor` over the issue list ([feature-list.html](../libs/issues/feature-list/src/lib/feature-list.html)); ~16 rows rendered regardless of result count.
+- **`content-visibility` / containment** — applied *where it helps*: the **board** renders all cards (no virtualization), so `content-visibility: auto` + `contain-intrinsic-size` skip rendering off-screen cards; the **list** is already virtual-scrolled, so its rows use `contain: layout paint` for per-row isolation instead (content-visibility would be redundant there).
 - **Efficient DOM updates** — `@for ... track` everywhere; the board is data-driven (no manual array mutation on drag).
 - **No layout thrash** — bar chart animates `width` only; CDK drag uses transforms (compositor), not `top/left`.
 - **Sized placeholders** — `bc-skeleton` reserves final dimensions → CLS 0.

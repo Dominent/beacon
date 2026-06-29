@@ -46,6 +46,12 @@
   box-shadow: var(--bc-shadow-sm);
   cursor: grab;
 
+  // The board renders ALL cards (no virtualization), so skip rendering/layout
+  // for cards scrolled out of their column. `contain-intrinsic-size: auto`
+  // remembers the real size once measured → no scroll jank / CLS.
+  content-visibility: auto;
+  contain-intrinsic-size: auto 84px;
+
   &:active {
     cursor: grabbing;
   }
